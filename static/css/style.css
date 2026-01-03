@@ -1,0 +1,201 @@
+/* apps/static/css/style.css */
+:root {
+    --color-blue: #163E6C;
+    --color-red: #D20A11;
+    --color-beige: #EBE6D6;
+    --font-main: 'PT Astra Sans', sans-serif;
+}
+
+body {
+    font-family: var(--font-main);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* Шапка */
+header {
+    background-color: var(--color-beige);
+    /* #EBE6D6 */
+    color: var(--color-blue);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Отступ между логотипом и текстом */
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 2.5rem;
+    /* Высота по размеру кнопки "Выход" */
+    width: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    /* Убирает белый фон у JPG изображения */
+    transition: transform 0.3s ease;
+    /* Плавная анимация */
+}
+
+.logo:hover .logo-img {
+    transform: scale(1.1);
+    /* Небольшое увеличение при наведении */
+}
+
+
+
+
+.logo-text {
+    font-weight: bold;
+    font-size: 1.8rem;
+    /* Увеличен для соответствия размеру логотипа */
+    color: var(--color-blue);
+    /* #163E6C */
+}
+
+
+.header-info {
+    display: flex;
+    align-items: center;
+    color: var(--color-blue);
+    /* #163E6C */
+}
+
+
+.auth-btn {
+    background-color: var(--color-red);
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    /* Плавная анимация */
+}
+
+.auth-btn:hover {
+    background-color: #f00;
+    /* Ярко-красный при наведении */
+}
+
+
+/* Контент */
+main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main h2,
+main h3 {
+    text-align: center;
+    color: var(--color-blue);
+    width: 100%;
+}
+
+/* Контейнер для таблицы с адаптивностью */
+.table-responsive {
+    width: 100%;
+    max-width: 1400px;
+    overflow-x: auto;
+    margin: 20px auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Футер */
+footer {
+    background-color: var(--color-blue);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}
+
+/* Таблицы (для выдачи результатов) */
+table {
+    width: 100%;
+    min-width: 800px;
+    /* Минимальная ширина для читаемости */
+    border-collapse: collapse;
+    margin: 0 auto;
+    background: white;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 12px 8px;
+    text-align: left;
+    white-space: nowrap;
+    /* Предотвращает перенос текста */
+}
+
+th {
+    background-color: var(--color-blue);
+    color: white;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    main {
+        padding: 1rem;
+    }
+
+    th,
+    td {
+        padding: 8px 4px;
+        font-size: 0.9rem;
+    }
+
+    .header-info span {
+        font-size: 0.85rem;
+    }
+}
+
+/* Стили для поисковой формы */
+.search-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.search-container form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.search-container input[type="text"] {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.search-container button {
+    border: none;
+    cursor: pointer;
+}

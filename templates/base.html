@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}"Электронная сервисная книжка "Мой Силант"{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <a href="/" class="logo">
+            <img src="{% static 'img/Logo_red.jpg' %}" alt="Логотип Силант" class="logo-img">
+            <span class="logo-text">Электронная сервисная книжка "Мой Силант"</span>
+        </a>
+        <div class="header-info">
+            <span>+7-8352-20-12-09, telegram</span>
+            {% if user.is_authenticated %}
+            <span style="margin-left: 20px;">Привет, {{ user.username }}</span>
+            <a href="{% url 'account_logout' %}" class="auth-btn" style="margin-left: 10px;">Выход</a>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="auth-btn" style="margin-left: 20px;">Авторизация</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div>+7-8352-20-12-09, telegram</div>
+        <div>Мой Силант 2022</div>
+    </footer>
+
+</body>
+
+</html>
