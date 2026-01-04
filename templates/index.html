@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
 {% if not user.is_authenticated %}
-
 <div class="search-container">
     <h2>Проверьте комплектацию и технические характеристики техники Силант</h2>
     <form method="get">
@@ -52,54 +52,297 @@
 {% endif %}
 {% endif %}
 
-
 {% else %}
-
-<h2>Информация о Вашей технике</h2>
-
-{% if machines %}
-<div class="table-responsive">
-    <table>
-        <thead>
-            <tr>
-                <th>Модель техники</th>
-                <th>Зав. № машины</th>
-                <th>Модель двигателя</th>
-                <th>Зав. № двигателя</th>
-                <th>Модель трансмиссии</th>
-                <th>Зав. № трансмиссии</th>
-                <th>Модель ведущего моста</th>
-                <th>Зав. № ведущего моста</th>
-                <th>Модель управляемого моста</th>
-                <th>Зав. № управляемого моста</th>
-                <th>Дата отгрузки</th>
-                <th>Клиент</th>
-                <th>Сервисная компания</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for machine in machines %}
-            <tr>
-                <td>{{ machine.technique_model }}</td>
-                <td>{{ machine.serial_number }}</td>
-                <td>{{ machine.engine_model }}</td>
-                <td>{{ machine.engine_serial }}</td>
-                <td>{{ machine.transmission_model }}</td>
-                <td>{{ machine.transmission_serial }}</td>
-                <td>{{ machine.drive_axle_model }}</td>
-                <td>{{ machine.drive_axle_serial }}</td>
-                <td>{{ machine.steering_axle_model }}</td>
-                <td>{{ machine.steering_axle_serial }}</td>
-                <td>{{ machine.date_shipment|date:"d-m-Y" }}</td>
-                <td>{{ machine.client.name }}</td>
-                <td>{{ machine.service_company.name }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="user-info-block">
+    <h3>{{ user.name|default:user.username }}</h3>
+    <p class="info-text">Информация о комплектации и технических характеристиках Вашей техники</p>
 </div>
-{% else %}
-<p>В базе данных пока нет машин, доступных для просмотра.</p>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="openTab(event, 'General')">Общая инфо</button>
+    <button class="tab-btn" onclick="openTab(event, 'Maintenance')">ТО</button>
+    <button class="tab-btn" onclick="openTab(event, 'Complaints')">Рекламации</button>
+</div>
+
+<div class="filters-container">
+    <form method="get" class="filter-form">
+
+        {% if user.is_manager or user.is_service or user.is_superuser %}
+        <div id="filter-General" class="filter-group">
+            <h4>Фильтр (Машины):</h4>
+            <select name="technique_model">
+                <option value="">Модель техники</option>
+                {% for item in technique_models %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <select name="engine_model">
+                <option value="">Модель двигателя</option>
+                {% for item in engine_models %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <select name="transmission_model">
+                <option value="">Модель трансмиссии</option>
+                {% for item in transmission_models %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <select name="drive_axle_model">
+                <option value="">Ведущий мост</option>
+                {% for item in drive_axle_models %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <select name="steering_axle_model">
+                <option value="">Управляемый мост</option>
+                {% for item in steering_axle_models %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <div id="filter-Maintenance" class="filter-group" style="display:none;">
+            <h4>Фильтр (ТО):</h4>
+            <select name="service_type">
+                <option value="">Вид ТО</option>
+                {% for item in service_types %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <input type="text" name="car_serial_to" placeholder="Зав. № машины">
+            <select name="service_company_to">
+                <option value="">Сервисная компания</option>
+                {% for item in service_companies %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+        </div>
+
+        <div id="filter-Complaints" class="filter-group" style="display:none;">
+            <h4>Фильтр (Рекламации):</h4>
+            <select name="failure_node">
+                <option value="">Узел отказа</option>
+                {% for item in failure_nodes %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <select name="recovery_method">
+                <option value="">Способ восстановления</option>
+                {% for item in recovery_methods %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+            <select name="service_company_complaint">
+                <option value="">Сервисная компания</option>
+                {% for item in service_companies %}<option value="{{ item.id }}">{{ item.name }}</option>{% endfor %}
+            </select>
+        </div>
+
+        {% if user.is_manager or user.is_service or user.is_superuser %}
+        <button type="submit" class="auth-btn filter-btn">Фильтровать</button>
+        <a href="{% url 'index' %}" class="reset-btn">Сброс</a>
+        {% endif %}
+    </form>
+</div>
+
+<div id="General" class="tab-content" style="display: block;">
+    {% if user.is_manager or user.is_superuser %}
+    <div style="margin-bottom: 20px; text-align: right;">
+        <a href="{% url 'machine_create' %}" class="auth-btn" style="text-decoration: none; display: inline-block;">+
+            Добавить машину</a>
+    </div>
+    {% endif %}
+    <div class="table-responsive">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Модель техники</th>
+                    <th>Зав. № машины</th>
+                    <th>Модель двигателя</th>
+                    <th>Зав. № двигателя</th>
+                    <th>Модель трансмиссии</th>
+                    <th>Зав. № трансмиссии</th>
+                    <th>Модель ведущего моста</th>
+                    <th>Зав. № ведущего моста</th>
+                    <th>Модель управляемого моста</th>
+                    <th>Зав. № управляемого моста</th>
+                    <th>Дата отгрузки</th>
+                    {% if not user.is_client %}
+                    <th>Клиент</th>
+                    {% endif %}
+                    <th>Сервисная компания</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for machine in machines %}
+                <tr onclick="window.location='{% url 'machine_detail' machine.pk %}';" style="cursor: pointer;">
+                    <td>{{ machine.technique_model }}</td>
+                    <td>{{ machine.serial_number }}</td>
+                    <td>{{ machine.engine_model }}</td>
+                    <td>{{ machine.engine_serial }}</td>
+                    <td>{{ machine.transmission_model }}</td>
+                    <td>{{ machine.transmission_serial }}</td>
+                    <td>{{ machine.drive_axle_model }}</td>
+                    <td>{{ machine.drive_axle_serial }}</td>
+                    <td>{{ machine.steering_axle_model }}</td>
+                    <td>{{ machine.steering_axle_serial }}</td>
+                    <td>{{ machine.date_shipment|date:"d.m.Y" }}</td>
+                    {% if not user.is_client %}
+                    <td>{{ machine.client.name }}</td>
+                    {% endif %}
+                    <td>{{ machine.service_company.name }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{% if user.is_client %}12{% else %}13{% endif %}">Нет данных</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="Maintenance" class="tab-content" style="display: none;">
+    <div style="margin-bottom: 20px; text-align: right;">
+        <a href="{% url 'maintenance_create' %}" class="auth-btn"
+            style="text-decoration: none; display: inline-block;">+ Добавить ТО</a>
+    </div>
+    <div class="table-responsive">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Машина (Зав.№)</th>
+                    <th>Вид ТО</th>
+                    <th>Дата проведения</th>
+                    <th>Наработка, м/час</th>
+                    <th>№ заказ-наряда</th>
+                    <th>Дата заказ-наряда</th>
+                    <th>Организация, проводившая ТО</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in maintenances %}
+                <tr onclick="window.location='{% url 'maintenance_detail' item.pk %}';" style="cursor: pointer;">
+                    <td>{{ item.machine.serial_number }}</td>
+                    <td>{{ item.service_type.name }}</td>
+                    <td>{{ item.event_date|date:"d.m.Y" }}</td>
+                    <td>{{ item.operating_hours }}</td>
+                    <td>{{ item.order_number }}</td>
+                    <td>{{ item.order_date|date:"d.m.Y" }}</td>
+                    <td>{{ item.service_company.name }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">Нет записей о ТО</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="Complaints" class="tab-content" style="display: none;">
+    <div style="margin-bottom: 20px; text-align: right;">
+        <a href="{% url 'complaint_create' %}" class="auth-btn" style="text-decoration: none; display: inline-block;">+
+            Добавить рекламацию</a>
+    </div>
+    <div class="table-responsive">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Машина (Зав.№)</th>
+                    <th>Дата отказа</th>
+                    <th>Наработка, м/час</th>
+                    <th>Узел отказа</th>
+                    <th>Описание отказа</th>
+                    <th>Способ восстановления</th>
+                    <th>Используемые запчасти</th>
+                    <th>Дата восстановления</th>
+                    <th>Время простоя (дни)</th>
+                    <th>Сервисная компания</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in complaints %}
+                <tr onclick="window.location='{% url 'complaint_detail' item.pk %}';" style="cursor: pointer;">
+                    <td>{{ item.machine.serial_number }}</td>
+                    <td>{{ item.failure_date|date:"d.m.Y" }}</td>
+                    <td>{{ item.operating_hours }}</td>
+                    <td>{{ item.failure_node.name }}</td>
+                    <td>{{ item.failure_description|truncatechars:50 }}</td>
+                    <td>{{ item.recovery_method.name }}</td>
+                    <td>{{ item.spare_parts|truncatechars:30 }}</td>
+                    <td>{{ item.recovery_date|date:"d.m.Y" }}</td>
+                    <td>{{ item.downtime }}</td>
+                    <td>{{ item.service_company.name }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10">Нет записей о рекламациях</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Проверяем localStorage, чтобы оставаться на вкладке после перезагрузки (фильтрации)
+    document.addEventListener("DOMContentLoaded", function () {
+        let activeTab = localStorage.getItem('activeTab') || 'General';
+        openTab(null, activeTab);
+    });
+
+    function openTab(evt, tabName) {
+        // Скрыть все таблицы
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Убрать класс active у кнопок
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Показать текущую таблицу
+        document.getElementById(tabName).style.display = "block";
+
+        // Подсветка кнопки (если событие клика было)
+        if (evt) {
+            evt.currentTarget.className += " active";
+        } else {
+            // Ищем кнопку по индексу для подсветки при загрузке
+            let btnIndex = 0;
+            if (tabName === 'Maintenance') btnIndex = 1;
+            if (tabName === 'Complaints') btnIndex = 2;
+            if (tablinks[btnIndex]) tablinks[btnIndex].classList.add("active");
+        }
+
+        // Логика переключения фильтров
+        // Скрываем все группы фильтров
+        let filterGroups = document.getElementsByClassName("filter-group");
+        for (i = 0; i < filterGroups.length; i++) {
+            filterGroups[i].style.display = "none";
+        }
+        // Показываем нужный фильтр
+        let activeFilter = document.getElementById("filter-" + tabName);
+        if (activeFilter) {
+            activeFilter.style.display = "block";
+        }
+
+        // Сохраняем состояние
+        localStorage.setItem('activeTab', tabName);
+    }
+
+    // Проверяем URL-параметр tab при загрузке страницы
+    window.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+
+        if (tabParam === 'maintenance') {
+            openTab(null, 'Maintenance');
+        } else if (tabParam === 'complaints') {
+            openTab(null, 'Complaints');
+        } else {
+            // Восстанавливаем последнюю активную вкладку из localStorage
+            let savedTab = localStorage.getItem('activeTab');
+            if (savedTab) {
+                openTab(null, savedTab);
+            }
+        }
+    });
+</script>
+
 {% endif %}
 
-{% endif %} {% endblock %}
+{% endblock %}

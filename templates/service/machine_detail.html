@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <h2>Детальная информация о машине</h2>
+    <h3>Заводской номер: {{ machine.serial_number }}</h3>
+
+    <div class="table-responsive">
+        <table style="width: 100%;">
+            <tbody>
+                <tr>
+                    <th>Модель техники</th>
+                    <td>
+                        <strong>{{ machine.technique_model.name }}</strong><br>
+                        <small>{{ machine.technique_model.description }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Двигатель</th>
+                    <td>
+                        {{ machine.engine_model.name }} ({{ machine.engine_serial }})<br>
+                        <small>{{ machine.engine_model.description }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Трансмиссия</th>
+                    <td>
+                        {{ machine.transmission_model.name }} ({{ machine.transmission_serial }})<br>
+                        <small>{{ machine.transmission_model.description }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Ведущий мост</th>
+                    <td>
+                        {{ machine.drive_axle_model.name }} ({{ machine.drive_axle_serial }})<br>
+                        <small>{{ machine.drive_axle_model.description }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Управляемый мост</th>
+                    <td>
+                        {{ machine.steering_axle_model.name }} ({{ machine.steering_axle_serial }})<br>
+                        <small>{{ machine.steering_axle_model.description }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Договор поставки</th>
+                    <td>{{ machine.supply_contract }}</td>
+                </tr>
+                <tr>
+                    <th>Дата отгрузки</th>
+                    <td>{{ machine.date_shipment|date:"d.m.Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Грузополучатель</th>
+                    <td>{{ machine.consignee }}</td>
+                </tr>
+                <tr>
+                    <th>Адрес поставки</th>
+                    <td>{{ machine.delivery_address }}</td>
+                </tr>
+                <tr>
+                    <th>Комплектация</th>
+                    <td>{{ machine.equipment }}</td>
+                </tr>
+                <tr>
+                    <th>Клиент</th>
+                    <td>{{ machine.client.name }}</td>
+                </tr>
+                <tr>
+                    <th>Сервисная компания</th>
+                    <td>{{ machine.service_company.name }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'index' %}" class="auth-btn">Назад к списку</a>
+    </div>
+</div>
+{% endblock %}

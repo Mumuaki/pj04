@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Переопределяем глобальные стили для этой страницы */
+    .detail-table th,
+    .detail-table td {
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .detail-table th {
+        width: 40%;
+    }
+
+    @media (max-width: 768px) {
+        .detail-table th {
+            width: 35%;
+            font-size: 0.9rem;
+        }
+
+        .detail-table td {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div style="max-width: 800px; margin: 0 auto; padding: 0 15px;">
+    <h2>Техническое обслуживание (ТО)</h2>
+
+    <table class="detail-table" style="width: 100%; min-width: auto;">
+        <tbody>
+            <tr>
+                <th>Машина</th>
+                <td>{{ maintenance.machine.serial_number }}</td>
+            </tr>
+            <tr>
+                <th>Вид ТО</th>
+                <td>
+                    <strong>{{ maintenance.service_type.name }}</strong><br>
+                    <small>{{ maintenance.service_type.description }}</small>
+                </td>
+            </tr>
+            <tr>
+                <th>Дата проведения</th>
+                <td>{{ maintenance.event_date|date:"d.m.Y" }}</td>
+            </tr>
+            <tr>
+                <th>Наработка</th>
+                <td>{{ maintenance.operating_hours }} м/час</td>
+            </tr>
+            <tr>
+                <th>Заказ-наряд</th>
+                <td>№ {{ maintenance.order_number }} от {{ maintenance.order_date|date:"d.m.Y" }}</td>
+            </tr>
+            <tr>
+                <th>Организация-исполнитель</th>
+                <td>{{ maintenance.service_company.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'index' %}?tab=maintenance" class="auth-btn">Назад</a>
+    </div>
+</div>
+{% endblock %}

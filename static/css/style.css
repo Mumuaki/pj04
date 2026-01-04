@@ -1,4 +1,5 @@
 /* apps/static/css/style.css */
+
 :root {
     --color-blue: #163E6C;
     --color-red: #D20A11;
@@ -16,60 +17,51 @@ body {
     background-color: #f8f9fa;
 }
 
-/* Шапка */
+/* --- Шапка --- */
 header {
     background-color: var(--color-beige);
-    /* #EBE6D6 */
     color: var(--color-blue);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    /* Чтобы на мобильных не ломалось */
+    gap: 15px;
 }
 
 .logo {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* Отступ между логотипом и текстом */
     text-decoration: none;
 }
 
 .logo-img {
     height: 2.5rem;
-    /* Высота по размеру кнопки "Выход" */
     width: auto;
     object-fit: contain;
     mix-blend-mode: multiply;
-    /* Убирает белый фон у JPG изображения */
     transition: transform 0.3s ease;
-    /* Плавная анимация */
 }
 
 .logo:hover .logo-img {
     transform: scale(1.1);
-    /* Небольшое увеличение при наведении */
 }
-
-
-
 
 .logo-text {
     font-weight: bold;
     font-size: 1.8rem;
-    /* Увеличен для соответствия размеру логотипа */
     color: var(--color-blue);
-    /* #163E6C */
 }
-
 
 .header-info {
     display: flex;
     align-items: center;
     color: var(--color-blue);
-    /* #163E6C */
+    flex-wrap: wrap;
+    gap: 10px;
 }
-
 
 .auth-btn {
     background-color: var(--color-red);
@@ -79,20 +71,20 @@ header {
     border-radius: 4px;
     font-weight: bold;
     transition: background-color 0.3s ease;
-    /* Плавная анимация */
+    white-space: nowrap;
 }
 
 .auth-btn:hover {
-    background-color: #f00;
-    /* Ярко-красный при наведении */
+    background-color: #b0080e;
+    /* Чуть темнее при наведении */
 }
 
-
-/* Контент */
+/* --- Контент --- */
 main {
     flex: 1;
     padding: 2rem;
-    max-width: 100%;
+    max-width: 1440px;
+    /* Ограничиваем ширину контента на больших экранах */
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
@@ -106,32 +98,179 @@ main h3 {
     text-align: center;
     color: var(--color-blue);
     width: 100%;
+    margin-bottom: 1rem;
 }
 
-/* Контейнер для таблицы с адаптивностью */
+/* Блок информации о пользователе */
+.user-info-block {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+.user-info-block h3 {
+    margin: 0 0 10px 0;
+    color: var(--color-blue);
+}
+
+.info-text {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 0;
+}
+
+/* --- Вкладки (Tabs) --- */
+.tabs {
+    width: 100%;
+    max-width: 1400px;
+    overflow: hidden;
+    margin-bottom: 0;
+    /* Убираем отступ, чтобы стыковалось с фильтром */
+    border-bottom: 2px solid var(--color-blue);
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    background-color: #e9ecef;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 24px;
+    transition: 0.3s;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-blue);
+    border-radius: 8px 8px 0 0;
+    /* Закругление только сверху */
+    margin-right: 5px;
+}
+
+.tab-btn:hover {
+    background-color: #dbe0e5;
+}
+
+.tab-btn.active {
+    background-color: var(--color-blue);
+    color: white;
+}
+
+/* Контент вкладок */
+.tab-content {
+    display: none;
+    /* Скрыто по умолчанию, JS управляет отображением */
+    padding: 20px 0;
+    width: 100%;
+    animation: fadeEffect 0.5s;
+}
+
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- Фильтры --- */
+.filters-container {
+    width: 100%;
+    max-width: 1400px;
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-top: none;
+    /* Чтобы сливалось с табами */
+}
+
+.filter-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.filter-group h4 {
+    margin: 0 0 10px 0;
+    color: var(--color-red);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.filter-form select,
+.filter-form input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 160px;
+    background-color: #fff;
+    flex-grow: 1;
+    /* Растягиваться при необходимости */
+}
+
+.filter-btn {
+    padding: 9px 25px;
+    background-color: var(--color-blue);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #102e52;
+}
+
+.reset-btn {
+    padding: 9px 25px;
+    text-decoration: none;
+    color: #555;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: background 0.3s;
+    display: inline-block;
+}
+
+.reset-btn:hover {
+    background-color: #e2e6ea;
+}
+
+/* --- Таблицы --- */
 .table-responsive {
     width: 100%;
     max-width: 1400px;
     overflow-x: auto;
-    margin: 20px auto;
+    margin: 0 auto 20px auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
 }
 
-/* Футер */
-footer {
-    background-color: var(--color-blue);
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    margin-top: auto;
-}
-
-/* Таблицы (для выдачи результатов) */
 table {
     width: 100%;
-    min-width: 800px;
-    /* Минимальная ширина для читаемости */
+    min-width: 900px;
+    /* Немного увеличил для безопасности */
     border-collapse: collapse;
     margin: 0 auto;
     background: white;
@@ -140,10 +279,9 @@ table {
 th,
 td {
     border: 1px solid #ddd;
-    padding: 12px 8px;
+    padding: 12px 15px;
     text-align: left;
     white-space: nowrap;
-    /* Предотвращает перенос текста */
 }
 
 th {
@@ -155,24 +293,18 @@ th {
     z-index: 10;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    main {
-        padding: 1rem;
-    }
-
-    th,
-    td {
-        padding: 8px 4px;
-        font-size: 0.9rem;
-    }
-
-    .header-info span {
-        font-size: 0.85rem;
-    }
+/* Подсветка строк и кликабельность */
+tbody tr {
+    transition: background-color 0.2s;
 }
 
-/* Стили для поисковой формы */
+tbody tr:hover {
+    background-color: #f1f7ff;
+    /* Светло-голубой при наведении */
+    cursor: pointer;
+}
+
+/* --- Форма поиска (для неавторизованных) --- */
 .search-container {
     width: 100%;
     max-width: 600px;
@@ -198,4 +330,62 @@ th {
 .search-container button {
     border: none;
     cursor: pointer;
+}
+
+/* --- Футер --- */
+footer {
+    background-color: var(--color-blue);
+    color: white;
+    padding: 1rem 2rem;
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* --- Адаптивность --- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .header-info {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .logo-text {
+        font-size: 1.4rem;
+    }
+
+    main {
+        padding: 1rem;
+    }
+
+    .tab-btn {
+        flex-grow: 1;
+        /* На мобильном кнопки табов растягиваются на всю ширину */
+        text-align: center;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .filters-container {
+        padding: 15px;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    th,
+    td {
+        padding: 10px 6px;
+        font-size: 0.85rem;
+    }
 }
