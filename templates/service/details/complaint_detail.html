@@ -76,7 +76,7 @@
 
     <div
         style="text-align: center; margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
-        <a href="{% url 'index' %}?tab=complaints" class="auth-btn" style="text-decoration: none;">Назад</a>
+        <a href="{% url 'index' %}?tab=complaints" class="auth-btn auth-btn-back" style="text-decoration: none;">Назад</a>
         <a href="{% url 'complaint_update' complaint.pk %}" class="auth-btn"
             style="text-decoration: none;">Изменить</a>
         <a href="{% url 'complaint_delete' complaint.pk %}" class="auth-btn"

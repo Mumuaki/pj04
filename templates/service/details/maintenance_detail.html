@@ -57,7 +57,7 @@
 
     <div
         style="text-align: center; margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
-        <a href="{% url 'index' %}?tab=maintenance" class="auth-btn" style="text-decoration: none;">Назад</a>
+        <a href="{% url 'index' %}?tab=maintenance" class="auth-btn auth-btn-back" style="text-decoration: none;">Назад</a>
         <a href="{% url 'maintenance_update' maintenance.pk %}" class="auth-btn"
             style="text-decoration: none;">Изменить</a>
         <a href="{% url 'maintenance_delete' maintenance.pk %}" class="auth-btn"

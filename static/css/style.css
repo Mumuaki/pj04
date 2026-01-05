@@ -283,8 +283,7 @@ main h3 {
 
 table {
     width: 100%;
-    min-width: 900px;
-    /* Немного увеличил для безопасности */
+    /* min-width removed to allow fitting on screen without scroll */
     border-collapse: collapse;
     margin: 0 auto;
     background: white;
@@ -295,8 +294,9 @@ td {
     border: 1px solid #ddd;
     padding: 8px 10px;
     text-align: left;
-    white-space: nowrap;
+    white-space: normal; /* Allow text wrapping */
     font-size: 0.9rem;
+    vertical-align: middle;
 }
 
 th {
@@ -450,4 +450,13 @@ footer {
     border-radius: 20px;
     border: 1px solid var(--color-red);
     box-shadow: 0 2px 4px rgba(210, 10, 17, 0.3);
+}
+
+/* Кнопка "Назад" - синяя */
+.auth-btn-back {
+    background-color: var(--color-blue) !important;
+}
+
+.auth-btn-back:hover {
+    background-color: var(--color-red) !important; /* Красный при наведении */
 }

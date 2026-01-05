@@ -7,6 +7,13 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     Позволяет настроить поведение регистрации и аутентификации пользователей.
     """
     
+    def is_open_for_signup(self, request):
+        """
+        Запрещаем самостоятельную регистрацию пользователей.
+        Регистрация возможна только через администратора.
+        """
+        return False
+
     def save_user(self, request, user, form, commit=True):
         """
         Сохранение пользователя при регистрации.

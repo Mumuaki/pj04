@@ -202,7 +202,7 @@ class ComplaintCreateView(LoginRequiredMixin, CreateView):
         user = request.user
         if not (getattr(user, 'is_service', False) or getattr(user, 'is_manager', False) or user.is_superuser):
              return render(request, 'service/permissions/complaint_denied.html', {
-                 'message': "У вас нет прав для создания рекламаций"
+                 'message': "У вас нет прав для создания рекламаций.\nОбратитесь в сервисную компанию или к продавцу."
              })
         return super().dispatch(request, *args, **kwargs)
 

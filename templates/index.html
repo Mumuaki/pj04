@@ -70,7 +70,7 @@
     <form method="get" class="filter-form">
         <input type="hidden" name="tab" id="active-tab-input" value="general">
 
-        {% if user.is_manager or user.is_service or user.is_superuser %}
+        {% if user.is_manager or user.is_service or user.is_superuser or user.is_client %}
         <div id="filter-General" class="filter-group">
             <h4>Фильтр (Машины):</h4>
             <select name="technique_model">
@@ -159,7 +159,7 @@
 
 <div id="General" class="tab-content" style="display: block;">
     {% if user.is_manager or user.is_superuser %}
-    <div style="margin-bottom: 20px; text-align: right;">
+    <div style="margin-bottom: 20px; text-align: right; max-width: 1400px; margin-left: auto; margin-right: auto;">
         <a href="{% url 'machine_create' %}" class="auth-btn" style="text-decoration: none; display: inline-block;">+ Добавить машину</a>
     </div>
     {% endif %}
@@ -235,7 +235,7 @@
 </div>
 
 <div id="Maintenance" class="tab-content" style="display: none;">
-    <div style="margin-bottom: 20px; text-align: right;">
+    <div style="margin-bottom: 20px; text-align: right; max-width: 1400px; margin-left: auto; margin-right: auto;">
         <a href="{% url 'maintenance_create' %}" class="auth-btn" style="text-decoration: none; display: inline-block;">+ Добавить ТО</a>
     </div>
     <div class="table-responsive">
@@ -293,7 +293,7 @@
 </div>
 
 <div id="Complaints" class="tab-content" style="display: none;">
-    <div style="margin-bottom: 20px; text-align: right;">
+    <div style="margin-bottom: 20px; text-align: right; max-width: 1400px; margin-left: auto; margin-right: auto;">
         <a href="{% url 'complaint_create' %}" class="auth-btn" style="text-decoration: none; display: inline-block;">+ Добавить рекламацию</a>
     </div>
     <div class="table-responsive">

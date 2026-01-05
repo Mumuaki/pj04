@@ -20,10 +20,9 @@ from apps.service.views import IndexView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('apps.service.urls')), # Все API будут доступны по /api/...
     path('api-auth/', include('rest_framework.urls')), # Кнопка "Log in" в интерфейсе API
     path('accounts/', include('allauth.urls')),
-    path('',IndexView.as_view(), name='index'),
+    path('', include('apps.service.urls')), # Подключаем URL приложения service (включая API по /api/)
 ]
 
 from django.conf import settings
