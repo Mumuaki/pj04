@@ -3,15 +3,9 @@
 {% block content %}
 <style>
     /* Переопределяем глобальные стили для этой страницы */
-    .detail-table th,
-    .detail-table td {
-        white-space: normal !important;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-
     .detail-table th {
-        width: 40%;
+        width: auto;
+        white-space: nowrap !important;
     }
 
     @media (max-width: 768px) {
@@ -61,8 +55,13 @@
         </tbody>
     </table>
 
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'index' %}?tab=maintenance" class="auth-btn">Назад</a>
+    <div
+        style="text-align: center; margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+        <a href="{% url 'index' %}?tab=maintenance" class="auth-btn" style="text-decoration: none;">Назад</a>
+        <a href="{% url 'maintenance_update' maintenance.pk %}" class="auth-btn"
+            style="text-decoration: none;">Изменить</a>
+        <a href="{% url 'maintenance_delete' maintenance.pk %}" class="auth-btn"
+            style="text-decoration: none;">Удалить</a>
     </div>
 </div>
 {% endblock %}

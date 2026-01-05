@@ -1,5 +1,20 @@
 /* apps/static/css/style.css */
 
+/* Подключение шрифтов PT Astra Sans */
+@font-face {
+    font-family: 'PT Astra Sans';
+    src: url('../fonts/PTAstraSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'PT Astra Sans';
+    src: url('../fonts/PTAstraSans-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 :root {
     --color-blue: #163E6C;
     --color-red: #D20A11;
@@ -21,13 +36,12 @@ body {
 header {
     background-color: var(--color-beige);
     color: var(--color-blue);
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    /* Чтобы на мобильных не ломалось */
-    gap: 15px;
+    gap: 10px;
 }
 
 .logo {
@@ -51,7 +65,8 @@ header {
 
 .logo-text {
     font-weight: bold;
-    font-size: 1.8rem;
+    font-weight: bold;
+    font-size: 1.4rem;
     color: var(--color-blue);
 }
 
@@ -72,6 +87,7 @@ header {
     font-weight: bold;
     transition: background-color 0.3s ease;
     white-space: nowrap;
+    font-size: 1rem;
 }
 
 .auth-btn:hover {
@@ -82,9 +98,8 @@ header {
 /* --- Контент --- */
 main {
     flex: 1;
-    padding: 2rem;
+    padding: 1rem;
     max-width: 1440px;
-    /* Ограничиваем ширину контента на больших экранах */
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
@@ -104,8 +119,8 @@ main h3 {
 /* Блок информации о пользователе */
 .user-info-block {
     text-align: center;
-    margin-bottom: 30px;
-    padding: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -142,13 +157,12 @@ main h3 {
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 14px 24px;
+    padding: 10px 20px;
     transition: 0.3s;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: var(--color-blue);
     border-radius: 8px 8px 0 0;
-    /* Закругление только сверху */
     margin-right: 5px;
 }
 
@@ -217,10 +231,10 @@ main h3 {
 
 .filter-form select,
 .filter-form input {
-    padding: 8px 12px;
+    padding: 6px 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     min-width: 160px;
     background-color: #fff;
     flex-grow: 1;
@@ -279,9 +293,10 @@ table {
 th,
 td {
     border: 1px solid #ddd;
-    padding: 12px 15px;
+    padding: 8px 10px;
     text-align: left;
     white-space: nowrap;
+    font-size: 0.9rem;
 }
 
 th {
@@ -336,7 +351,7 @@ tbody tr:hover {
 footer {
     background-color: var(--color-blue);
     color: white;
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     margin-top: auto;
     display: flex;
     justify-content: space-between;
@@ -388,4 +403,51 @@ footer {
         padding: 10px 6px;
         font-size: 0.85rem;
     }
+}
+
+/* --- Пагинация --- */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.step-links {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 50px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.step-links a {
+    text-decoration: none;
+    color: var(--color-blue);
+    padding: 5px 10px;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.step-links a:hover {
+    background-color: var(--color-blue);
+    color: white;
+    border-color: var(--color-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(22, 62, 108, 0.2);
+}
+
+.step-links .current {
+    padding: 8px 16px;
+    font-weight: bold;
+    color: white;
+    background-color: var(--color-red);
+    border-radius: 20px;
+    border: 1px solid var(--color-red);
+    box-shadow: 0 2px 4px rgba(210, 10, 17, 0.3);
 }

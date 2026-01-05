@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 100px;">
+    <h2 style="color: var(--color-red); margin-bottom: 30px;">
+        {{ message|default:"У вас нет прав для выполнения этого действия" }}
+    </h2>
+
+    <button onclick="history.back()" class="auth-btn"
+        style="border: none; cursor: pointer; font-size: 16px; padding: 10px 30px;">
+        Назад
+    </button>
+</div>
+{% endblock %}

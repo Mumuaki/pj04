@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Переопределяем глобальные стили для этой страницы */
+    .detail-table th {
+        width: auto;
+        white-space: nowrap !important;
+    }
+
+    @media (max-width: 768px) {
+        .detail-table th {
+            width: 35%;
+            font-size: 0.9rem;
+        }
+
+        .detail-table td {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div style="max-width: 800px; margin: 0 auto; padding: 0 15px;">
+    <h2>Рекламация</h2>
+
+    <table class="detail-table" style="width: 100%; min-width: auto;">
+        <tbody>
+            <tr>
+                <th>Машина</th>
+                <td>{{ complaint.machine.serial_number }}</td>
+            </tr>
+            <tr>
+                <th>Узел отказа</th>
+                <td>
+                    <strong>{{ complaint.failure_node.name }}</strong><br>
+                    <small>{{ complaint.failure_node.description }}</small>
+                </td>
+            </tr>
+            <tr>
+                <th>Дата отказа</th>
+                <td>{{ complaint.failure_date|date:"d.m.Y" }}</td>
+            </tr>
+            <tr>
+                <th>Наработка</th>
+                <td>{{ complaint.operating_hours }} м/час</td>
+            </tr>
+            <tr>
+                <th>Описание отказа</th>
+                <td>{{ complaint.failure_description }}</td>
+            </tr>
+            <tr>
+                <th>Способ восстановления</th>
+                <td>
+                    <strong>{{ complaint.recovery_method.name }}</strong><br>
+                    <small>{{ complaint.recovery_method.description }}</small>
+                </td>
+            </tr>
+            <tr>
+                <th>Используемые запчасти</th>
+                <td>{{ complaint.spare_parts }}</td>
+            </tr>
+            <tr>
+                <th>Дата восстановления</th>
+                <td>{{ complaint.recovery_date|date:"d.m.Y" }}</td>
+            </tr>
+            <tr>
+                <th>Время простоя</th>
+                <td>{{ complaint.downtime }} дней</td>
+            </tr>
+            <tr>
+                <th>Сервисная компания</th>
+                <td>{{ complaint.service_company.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div
+        style="text-align: center; margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+        <a href="{% url 'index' %}?tab=complaints" class="auth-btn" style="text-decoration: none;">Назад</a>
+        <a href="{% url 'complaint_update' complaint.pk %}" class="auth-btn"
+            style="text-decoration: none;">Изменить</a>
+        <a href="{% url 'complaint_delete' complaint.pk %}" class="auth-btn"
+            style="text-decoration: none;">Удалить</a>
+    </div>
+</div>
+{% endblock %}

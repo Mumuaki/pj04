@@ -1,8 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.shortcuts import render
 from django.http import HttpResponseForbidden
 from .models import (
     Machine, Maintenance, Complaint,
@@ -10,9 +11,11 @@ from .models import (
     DriveAxleModel, SteeringAxleModel, ServiceType,
     FailureNode, RecoveryMethod
 )
+from django.core.paginator import Paginator
 from .serializers import MachineSerializer, MaintenanceSerializer, ComplaintSerializer
 from apps.users.models import CustomUser
 from .forms import MachineForm, MaintenanceForm, ComplaintForm
+from .mixins import RoleBasedAccessMixin
 
 
 class MachineViewSet(viewsets.ModelViewSet):
@@ -36,146 +39,52 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+from .services import (
+    get_filtered_machines, get_filtered_maintenances, get_filtered_complaints,
+    get_machines_for_filter, get_service_companies_for_filter
+)
+
 class IndexView(ListView):
     model = Machine
     template_name = 'index.html'
     context_object_name = 'machines'
+    paginate_by = 5
 
     def get_queryset(self):
-        """Определяем, какие машины показывать в таблице (для авторизованных)."""
-        user = self.request.user
-        
-        if not user.is_authenticated:
-            return Machine.objects.none()
-        
-        queryset = Machine.objects.all()
-        
-        # Фильтрация по ролям
-        if user.is_staff or user.is_superuser or getattr(user, 'is_manager', False):
-            pass  # Видит все
-        elif getattr(user, 'is_service', False):
-            queryset = queryset.filter(service_company=user)
-        elif getattr(user, 'is_client', False):
-            queryset = queryset.filter(client=user)
-        else:
-            queryset = Machine.objects.none()
-        
-        # Применяем фильтры из GET-параметров
-        technique_model = self.request.GET.get('technique_model')
-        if technique_model:
-            queryset = queryset.filter(technique_model_id=technique_model)
-        
-        engine_model = self.request.GET.get('engine_model')
-        if engine_model:
-            queryset = queryset.filter(engine_model_id=engine_model)
-        
-        transmission_model = self.request.GET.get('transmission_model')
-        if transmission_model:
-            queryset = queryset.filter(transmission_model_id=transmission_model)
-        
-        drive_axle_model = self.request.GET.get('drive_axle_model')
-        if drive_axle_model:
-            queryset = queryset.filter(drive_axle_model_id=drive_axle_model)
-        
-        steering_axle_model = self.request.GET.get('steering_axle_model')
-        if steering_axle_model:
-            queryset = queryset.filter(steering_axle_model_id=steering_axle_model)
-        
-        return queryset
-
-    def get_maintenance_queryset(self):
-        """Получение отфильтрованного списка ТО."""
-        user = self.request.user
-        
-        if not user.is_authenticated:
-            return Maintenance.objects.none()
-        
-        queryset = Maintenance.objects.select_related('machine', 'service_type', 'service_company')
-        
-        # Фильтрация по ролям
-        if user.is_staff or user.is_superuser or getattr(user, 'is_manager', False):
-            pass  # Видит все
-        elif getattr(user, 'is_service', False):
-            queryset = queryset.filter(machine__service_company=user)
-        elif getattr(user, 'is_client', False):
-            queryset = queryset.filter(machine__client=user)
-        else:
-            queryset = Maintenance.objects.none()
-        
-        # Применяем фильтры
-        service_type = self.request.GET.get('service_type')
-        if service_type:
-            queryset = queryset.filter(service_type_id=service_type)
-        
-        car_serial_to = self.request.GET.get('car_serial_to')
-        if car_serial_to:
-            queryset = queryset.filter(machine__serial_number__icontains=car_serial_to)
-        
-        service_company_to = self.request.GET.get('service_company_to')
-        if service_company_to:
-            queryset = queryset.filter(service_company_id=service_company_to)
-        
-        return queryset
-
-    def get_complaints_queryset(self):
-        """Получение отфильтрованного списка рекламаций."""
-        user = self.request.user
-        
-        if not user.is_authenticated:
-            return Complaint.objects.none()
-        
-        queryset = Complaint.objects.select_related(
-            'machine', 'failure_node', 'recovery_method', 'service_company'
-        )
-        
-        # Фильтрация по ролям
-        if user.is_staff or user.is_superuser or getattr(user, 'is_manager', False):
-            pass  # Видит все
-        elif getattr(user, 'is_service', False):
-            queryset = queryset.filter(machine__service_company=user)
-        elif getattr(user, 'is_client', False):
-            queryset = queryset.filter(machine__client=user)
-        else:
-            queryset = Complaint.objects.none()
-        
-        # Применяем фильтры
-        failure_node = self.request.GET.get('failure_node')
-        if failure_node:
-            queryset = queryset.filter(failure_node_id=failure_node)
-        
-        recovery_method = self.request.GET.get('recovery_method')
-        if recovery_method:
-            queryset = queryset.filter(recovery_method_id=recovery_method)
-        
-        service_company_complaint = self.request.GET.get('service_company_complaint')
-        if service_company_complaint:
-            queryset = queryset.filter(service_company_id=service_company_complaint)
-        
-        return queryset
+        return get_filtered_machines(self.request.user, self.request.GET)
 
     def get_context_data(self, **kwargs):
-        """Добавляем данные для всех вкладок и фильтров."""
         context = super().get_context_data(**kwargs)
         
         # Логика поиска по заводскому номеру (для неавторизованных)
         serial_number = self.request.GET.get('serial_number')
         if serial_number:
             try:
-                found_machine = Machine.objects.get(serial_number=serial_number)
-                context['search_result'] = found_machine
+                context['search_result'] = Machine.objects.get(serial_number=serial_number)
                 context['search_performed'] = True
             except Machine.DoesNotExist:
                 context['search_result'] = None
                 context['search_performed'] = True
                 context['not_found_message'] = "Данных о машине с таким заводским номером нет в системе"
         
-        # Данные для авторизованных пользователей
         if self.request.user.is_authenticated:
-            # Данные для вкладок
-            context['maintenances'] = self.get_maintenance_queryset()
-            context['complaints'] = self.get_complaints_queryset()
+            # Списки для фильтров
+            context['machines_filter_list'] = get_machines_for_filter(self.request.user)
+            companies_qs = get_service_companies_for_filter(self.request.user)
+            context['complaint_filter_service_companies'] = companies_qs
+            context['maintenance_filter_service_companies'] = companies_qs
+
+            # Пагинация для ТО
+            m_queryset = get_filtered_maintenances(self.request.user, self.request.GET)
+            m_paginator = Paginator(m_queryset, 5)
+            context['maintenances'] = m_paginator.get_page(self.request.GET.get('page_m'))
             
-            # Справочники для фильтров
+            # Пагинация для Рекламаций
+            c_queryset = get_filtered_complaints(self.request.user, self.request.GET)
+            c_paginator = Paginator(c_queryset, 5)
+            context['complaints'] = c_paginator.get_page(self.request.GET.get('page_c'))
+            
+            # Справочники
             context['technique_models'] = TechniqueModel.objects.all()
             context['engine_models'] = EngineModel.objects.all()
             context['transmission_models'] = TransmissionModel.objects.all()
@@ -184,29 +93,29 @@ class IndexView(ListView):
             context['service_types'] = ServiceType.objects.all()
             context['failure_nodes'] = FailureNode.objects.all()
             context['recovery_methods'] = RecoveryMethod.objects.all()
-            context['service_companies'] = CustomUser.objects.filter(role='service')
-        
+            context['service_companies'] = CustomUser.objects.filter(role='service') # Общий список для справочников
+
         return context
 
 
-class MachineDetailView(DetailView):
+class MachineDetailView(RoleBasedAccessMixin, DetailView):
     """Детальная страница машины."""
     model = Machine
-    template_name = 'service/machine_detail.html'
+    template_name = 'service/details/machine_detail.html'
     context_object_name = 'machine'
 
 
-class MaintenanceDetailView(DetailView):
+class MaintenanceDetailView(RoleBasedAccessMixin, DetailView):
     """Детальная страница ТО."""
     model = Maintenance
-    template_name = 'service/maintenance_detail.html'
+    template_name = 'service/details/maintenance_detail.html'
     context_object_name = 'maintenance'
 
 
-class ComplaintDetailView(DetailView):
+class ComplaintDetailView(RoleBasedAccessMixin, DetailView):
     """Детальная страница рекламации."""
     model = Complaint
-    template_name = 'service/complaint_detail.html'
+    template_name = 'service/details/complaint_detail.html'
     context_object_name = 'complaint'
 
 # --- Views для создания записей (CreateViews) ---
@@ -214,7 +123,7 @@ class ComplaintDetailView(DetailView):
 class MachineCreateView(LoginRequiredMixin, CreateView):
     model = Machine
     form_class = MachineForm
-    template_name = 'service/machine_form.html'
+    template_name = 'service/forms/machine_form.html'
     success_url = reverse_lazy('index')
 
     def dispatch(self, request, *args, **kwargs):
@@ -232,7 +141,7 @@ class MachineCreateView(LoginRequiredMixin, CreateView):
 class MaintenanceCreateView(LoginRequiredMixin, CreateView):
     model = Maintenance
     form_class = MaintenanceForm
-    template_name = 'service/maintenance_form.html'
+    template_name = 'service/forms/maintenance_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         # Клиент, Сервис и Менеджер могут добавлять ТО
@@ -254,17 +163,47 @@ class MaintenanceCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy('index') + '?tab=maintenance'
 
 
+class MaintenanceUpdateView(LoginRequiredMixin, RoleBasedAccessMixin, UpdateView):
+    model = Maintenance
+    form_class = MaintenanceForm
+    template_name = 'service/forms/maintenance_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Редактирование записи о ТО'
+        return context
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+    def get_success_url(self):
+        return reverse_lazy('index') + '?tab=maintenance'
+
+
+class MaintenanceDeleteView(LoginRequiredMixin, RoleBasedAccessMixin, DeleteView):
+    model = Maintenance
+    template_name = 'service/forms/maintenance_confirm_delete.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('index') + '?tab=maintenance'
+
+
 class ComplaintCreateView(LoginRequiredMixin, CreateView):
     model = Complaint
     form_class = ComplaintForm
-    template_name = 'service/complaint_form.html'
-    success_url = reverse_lazy('index')
+    template_name = 'service/forms/complaint_form.html'
+    def get_success_url(self):
+        return reverse_lazy('index') + '?tab=complaints'
 
     def dispatch(self, request, *args, **kwargs):
         # Сервис и Менеджер могут добавлять Рекламации. Клиент - НЕТ.
         user = request.user
         if not (getattr(user, 'is_service', False) or getattr(user, 'is_manager', False) or user.is_superuser):
-             return HttpResponseForbidden("У вас нет прав для создания рекламаций.")
+             return render(request, 'service/permissions/complaint_denied.html', {
+                 'message': "У вас нет прав для создания рекламаций"
+             })
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -277,3 +216,29 @@ class ComplaintCreateView(LoginRequiredMixin, CreateView):
         kwargs['user'] = self.request.user  # Передаем пользователя в форму
         return kwargs
 
+
+class ComplaintUpdateView(LoginRequiredMixin, RoleBasedAccessMixin, UpdateView):
+    model = Complaint
+    form_class = ComplaintForm
+    template_name = 'service/forms/complaint_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Редактирование рекламации'
+        return context
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+    def get_success_url(self):
+        return reverse_lazy('index') + '?tab=complaints'
+
+
+class ComplaintDeleteView(LoginRequiredMixin, RoleBasedAccessMixin, DeleteView):
+    model = Complaint
+    template_name = 'service/forms/complaint_confirm_delete.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('index') + '?tab=complaints'
