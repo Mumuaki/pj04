@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-"""Скрипт для проверки данных в базе данных"""
 import os
 import django
 
