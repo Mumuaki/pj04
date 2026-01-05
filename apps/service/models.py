@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.db import models
-from django.conf import settings  # Ссылка на нашу кастомную модель User
 
-# --- Абстрактный класс для Справочников (чтобы не дублировать код) ---
+
 class BaseCatalog(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
     description = models.TextField(blank=True, verbose_name='Описание')
@@ -12,49 +12,54 @@ class BaseCatalog(models.Model):
     def __str__(self):
         return self.name
 
-# --- Справочники ---
+
 class TechniqueModel(BaseCatalog):
     class Meta:
         verbose_name = 'Модель техники'
         verbose_name_plural = 'Справочник: Модели техники'
+
 
 class EngineModel(BaseCatalog):
     class Meta:
         verbose_name = 'Модель двигателя'
         verbose_name_plural = 'Справочник: Модели двигателей'
 
+
 class TransmissionModel(BaseCatalog):
     class Meta:
         verbose_name = 'Модель трансмиссии'
         verbose_name_plural = 'Справочник: Модели трансмиссии'
+
 
 class DriveAxleModel(BaseCatalog):
     class Meta:
         verbose_name = 'Модель ведущего моста'
         verbose_name_plural = 'Справочник: Модели ведущих мостов'
 
+
 class SteeringAxleModel(BaseCatalog):
     class Meta:
         verbose_name = 'Модель управляемого моста'
         verbose_name_plural = 'Справочник: Модели управляемых мостов'
+
 
 class ServiceType(BaseCatalog):
     class Meta:
         verbose_name = 'Вид ТО'
         verbose_name_plural = 'Справочник: Виды ТО'
 
+
 class FailureNode(BaseCatalog):
     class Meta:
         verbose_name = 'Узел отказа'
         verbose_name_plural = 'Справочник: Узлы отказа'
+
 
 class RecoveryMethod(BaseCatalog):
     class Meta:
         verbose_name = 'Способ восстановления'
         verbose_name_plural = 'Справочник: Способы восстановления'
 
-
-# --- Основные сущности ---
 
 class Machine(models.Model):
     serial_number = models.CharField(max_length=255, unique=True, verbose_name='Зав. № машины')
@@ -67,13 +72,13 @@ class Machine(models.Model):
     drive_axle_serial = models.CharField(max_length=255, verbose_name='Зав. № ведущего моста')
     steering_axle_model = models.ForeignKey(SteeringAxleModel, on_delete=models.PROTECT, verbose_name='Модель управляемого моста')
     steering_axle_serial = models.CharField(max_length=255, verbose_name='Зав. № управляемого моста')
-    
+
     supply_contract = models.CharField(max_length=255, blank=True, verbose_name='Договор поставки №, дата')
     date_shipment = models.DateField(verbose_name='Дата отгрузки с завода')
     consignee = models.CharField(max_length=255, verbose_name='Грузополучатель (конечный потребитель)')
     delivery_address = models.CharField(max_length=255, verbose_name='Адрес поставки (эксплуатации)')
     equipment = models.TextField(blank=True, verbose_name='Комплектация (доп. опции)')
-    
+
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='machines_client', verbose_name='Клиент')
     service_company = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='machines_service', verbose_name='Сервисная компания')
 
@@ -93,9 +98,9 @@ class Maintenance(models.Model):
     operating_hours = models.IntegerField(verbose_name='Наработка, м/час')
     order_number = models.CharField(max_length=255, verbose_name='№ заказ-наряда')
     order_date = models.DateField(verbose_name='Дата заказ-наряда')
-    
+
     service_company = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, verbose_name='Организация, проводившая ТО')
-    
+
     class Meta:
         verbose_name = 'Техническое обслуживание'
         verbose_name_plural = 'Технические обслуживания'
@@ -111,7 +116,7 @@ class Complaint(models.Model):
     recovery_method = models.ForeignKey(RecoveryMethod, on_delete=models.PROTECT, verbose_name='Способ восстановления')
     spare_parts = models.TextField(blank=True, verbose_name='Используемые запасные части')
     recovery_date = models.DateField(verbose_name='Дата восстановления')
-    
+
     downtime = models.IntegerField(verbose_name='Время простоя техники (дни)', blank=True, null=True)
 
     service_company = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, verbose_name='Сервисная компания')
@@ -120,7 +125,7 @@ class Complaint(models.Model):
         verbose_name = 'Рекламация'
         verbose_name_plural = 'Рекламации'
         ordering = ['failure_date']
-    
+
     def save(self, *args, **kwargs):
         if self.recovery_date and self.failure_date:
             delta = self.recovery_date - self.failure_date
