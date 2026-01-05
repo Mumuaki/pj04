@@ -6,15 +6,12 @@ from .models import CustomUser
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     
-    # Поля, которые видны в списке пользователей
     list_display = ['username', 'email', 'role', 'name', 'is_staff']
     
-    # Добавляем поле role и name в форму редактирования пользователя
     fieldsets = UserAdmin.fieldsets + (
         ('Дополнительная информация', {'fields': ('role', 'name')}),
     )
     
-    # Добавляем эти же поля в форму создания пользователя
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Дополнительная информация', {'fields': ('role', 'name')}),
     )
