@@ -1,6 +1,3 @@
-/* apps/static/css/style.css */
-
-/* Подключение шрифтов PT Astra Sans */
 @font-face {
     font-family: 'PT Astra Sans';
     src: url('../fonts/PTAstraSans-Regular.ttf') format('truetype');
@@ -32,7 +29,6 @@ body {
     background-color: #f8f9fa;
 }
 
-/* --- Шапка --- */
 header {
     background-color: var(--color-beige);
     color: var(--color-blue);
@@ -92,10 +88,8 @@ header {
 
 .auth-btn:hover {
     background-color: #b0080e;
-    /* Чуть темнее при наведении */
 }
 
-/* --- Контент --- */
 main {
     flex: 1;
     padding: 1rem;
@@ -116,7 +110,6 @@ main h3 {
     margin-bottom: 1rem;
 }
 
-/* Блок информации о пользователе */
 .user-info-block {
     text-align: center;
     margin-bottom: 15px;
@@ -139,13 +132,11 @@ main h3 {
     margin: 0;
 }
 
-/* --- Вкладки (Tabs) --- */
 .tabs {
     width: 100%;
     max-width: 1400px;
     overflow: hidden;
     margin-bottom: 0;
-    /* Убираем отступ, чтобы стыковалось с фильтром */
     border-bottom: 2px solid var(--color-blue);
     display: flex;
     justify-content: flex-start;
@@ -175,10 +166,8 @@ main h3 {
     color: white;
 }
 
-/* Контент вкладок */
 .tab-content {
     display: none;
-    /* Скрыто по умолчанию, JS управляет отображением */
     padding: 20px 0;
     width: 100%;
     animation: fadeEffect 0.5s;
@@ -194,7 +183,6 @@ main h3 {
     }
 }
 
-/* --- Фильтры --- */
 .filters-container {
     width: 100%;
     max-width: 1400px;
@@ -206,7 +194,6 @@ main h3 {
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-top: none;
-    /* Чтобы сливалось с табами */
 }
 
 .filter-group {
@@ -238,7 +225,6 @@ main h3 {
     min-width: 160px;
     background-color: #fff;
     flex-grow: 1;
-    /* Растягиваться при необходимости */
 }
 
 .filter-btn {
@@ -271,7 +257,6 @@ main h3 {
     background-color: #e2e6ea;
 }
 
-/* --- Таблицы --- */
 .table-responsive {
     width: 100%;
     max-width: 1400px;
@@ -283,7 +268,6 @@ main h3 {
 
 table {
     width: 100%;
-    /* min-width removed to allow fitting on screen without scroll */
     border-collapse: collapse;
     margin: 0 auto;
     background: white;
@@ -294,7 +278,7 @@ td {
     border: 1px solid #ddd;
     padding: 8px 10px;
     text-align: left;
-    white-space: normal; /* Allow text wrapping */
+    white-space: normal; 
     font-size: 0.9rem;
     vertical-align: middle;
 }
@@ -308,18 +292,15 @@ th {
     z-index: 10;
 }
 
-/* Подсветка строк и кликабельность */
 tbody tr {
     transition: background-color 0.2s;
 }
 
 tbody tr:hover {
     background-color: #f1f7ff;
-    /* Светло-голубой при наведении */
     cursor: pointer;
 }
 
-/* --- Форма поиска (для неавторизованных) --- */
 .search-container {
     width: 100%;
     max-width: 600px;
@@ -347,7 +328,6 @@ tbody tr:hover {
     cursor: pointer;
 }
 
-/* --- Футер --- */
 footer {
     background-color: var(--color-blue);
     color: white;
@@ -360,7 +340,6 @@ footer {
     gap: 15px;
 }
 
-/* --- Адаптивность --- */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
@@ -383,7 +362,6 @@ footer {
 
     .tab-btn {
         flex-grow: 1;
-        /* На мобильном кнопки табов растягиваются на всю ширину */
         text-align: center;
         font-size: 14px;
         padding: 10px;
@@ -405,7 +383,6 @@ footer {
     }
 }
 
-/* --- Пагинация --- */
 .pagination {
     display: flex;
     justify-content: center;
@@ -452,11 +429,10 @@ footer {
     box-shadow: 0 2px 4px rgba(210, 10, 17, 0.3);
 }
 
-/* Кнопка "Назад" - синяя */
 .auth-btn-back {
     background-color: var(--color-blue) !important;
 }
 
 .auth-btn-back:hover {
-    background-color: var(--color-red) !important; /* Красный при наведении */
+    background-color: var(--color-red) !important; 
 }
