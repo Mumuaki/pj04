@@ -5,7 +5,6 @@ class MachineForm(forms.ModelForm):
     class Meta:
         model = Machine
         fields = '__all__'
-        # Добавляем виджеты для полей с датами, чтобы был календарь
         widgets = {
             'date_shipment': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
