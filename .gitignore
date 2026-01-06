@@ -14,14 +14,10 @@ ENV/
 
 # Django
 *.log
-# db.sqlite3
-# db.sqlite3-journal
-<<<<<<< HEAD
-# /media
-=======
+db.sqlite3
+db.sqlite3-journal
 /media
->>>>>>> 2c5e15953237833c68838b2bf04eb587fb4bc458
-# /staticfiles
+/staticfiles
 
 # Environment variables
 .env
