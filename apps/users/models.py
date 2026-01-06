@@ -19,7 +19,6 @@ class CustomUser(AbstractUser):
         default=CLIENT, 
         verbose_name='Роль'
     )
-    # Имя сервисной организации или клиента (если нужно отличающееся от username)
     name = models.CharField(max_length=255, blank=True, verbose_name='Имя / Название организации')
 
     def __str__(self):

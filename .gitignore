@@ -16,7 +16,11 @@ ENV/
 *.log
 # db.sqlite3
 # db.sqlite3-journal
+<<<<<<< HEAD
 # /media
+=======
+/media
+>>>>>>> 2c5e15953237833c68838b2bf04eb587fb4bc458
 # /staticfiles
 
 # Environment variables
